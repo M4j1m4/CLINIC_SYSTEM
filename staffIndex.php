@@ -194,6 +194,11 @@
         .error, .text-danger {
             color: red;
         }
+
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -222,7 +227,7 @@
 
 <!-- Popup Table -->
 <div class="popup-table" id="popupTable">
-    <span class="close-btn" onclick="closePopup()">×</span>
+    <span class="close-btn" onclick="closePopup()">&times;</span>
     <h4>Notification Details</h4>
     <table>
         <tr>
@@ -238,7 +243,6 @@
     </div>
 </div>
 
-
     <!-- Main Content -->
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -251,30 +255,44 @@
                         <form method="post" action="add_patient_backend.php">
                             <!-- Personal Details Fields -->
                             <div class="form-group">
-                                <input type="text" class="form-control" name="StudentNo" placeholder="Student Number" required>
-                                <input type="text" class="form-control" name="LastName" placeholder="Last Name" required>
-                                <input type="text" class="form-control" name="FirstName" placeholder="First Name" required>
-                                <input type="text" class="form-control" name="MiddleInitial" placeholder="Middle Name">
-                                <input type="text" class="form-control" name="email" placeholder="Email" required>
-                                <input type="text" class="form-control" name="Sex" placeholder="Sex (M/F)" required>
-                                <input type="number" class="form-control" name="age" placeholder="Age" required>
-                                <input type="text" class="form-control" name="civil_status" placeholder="Civil Status" required>
+                                <label class="required-field">Student Number</label>
+                                <input type="text" class="form-control" name="StudentNo" required>
+                                <label class="required-field">Last Name</label>
+                                <input type="text" class="form-control" name="LastName" required>
+                                <label class="required-field">First Name</label>
+                                <input type="text" class="form-control" name="FirstName" required>
+                                <label>Middle Name</label>
+                                <input type="text" class="form-control" name="MiddleInitial">
+                                <label class="required-field">Email</label>
+                                <input type="text" class="form-control" name="email" required>
+                                <label class="required-field">Sex (M/F)</label>
+                                <input type="text" class="form-control" name="Sex" required>
+                                <label class="required-field">Age</label>
+                                <input type="number" class="form-control" name="age" required>
+                                <label class="required-field">Civil Status</label>
+                                <input type="text" class="form-control" name="civil_status" required>
                             </div>
                             <!-- Address and Contact Information -->
                             <div class="form-group">
-                                <input type="text" class="form-control" name="Address" placeholder="Address">
-                                <input type="tel" class="form-control" name="ContactNumber" placeholder="Cellphone Number" pattern="\d{10}" title="Enter a valid 10-digit number" required>
-                                <input type="tel" class="form-control" name="emergency_number" placeholder="Emergency Number" pattern="\d{10}" title="Enter a valid 10-digit number">
-                                <input type="text" class="form-control" name="guardian" placeholder="Parent/Guardian">
+                                <label>Address</label>
+                                <input type="text" class="form-control" name="Address">
+                                <label class="required-field">Cellphone Number</label>
+                                <input type="tel" class="form-control" name="ContactNumber" pattern="\d{10}" title="Enter a valid 10-digit number" required>
+                                <label>Emergency Number</label>
+                                <input type="tel" class="form-control" name="emergency_number" pattern="\d{10}" title="Enter a valid 10-digit number">
+                                <label>Parent/Guardian</label>
+                                <input type="text" class="form-control" name="guardian">
                             </div>
                             <!-- Physical Attributes -->
                             <div class="form-group">
-                                <input type="number" class="form-control" name="height" placeholder="Height (cm)" required>
-                                <input type="number" class="form-control" name="weight" placeholder="Weight (kg)">
+                                <label class="required-field">Height (cm)</label>
+                                <input type="number" class="form-control" name="height" required>
+                                <label>Weight (kg)</label>
+                                <input type="number" class="form-control" name="weight">
                             </div>
                             <!-- Year Level -->
                             <div class="form-group">
-                                <label for="yearLevel">Year Level</label>
+                                <label class="required-field">Year Level</label>
                                 <select class="form-control" id="yearLevel" name="yearLevel" required>
                                     <option value="">Select Year Level</option>
                                     <option value="1st Year">1st Year</option>
@@ -286,7 +304,7 @@
                             </div>
                             <!-- Program -->
                             <div class="form-group">
-                                <label for="program">Program</label>
+                                <label class="required-field">Program</label>
                                 <select class="form-control" id="Program" name="Program" required>
                                     <option value="">Select Program</option>
                                     <option value="CET">CET - College of Engineering and Technology </option>
@@ -299,7 +317,7 @@
                             </div>                            
                             <!-- Special Cases -->
                             <div class="form-group">
-                                <label for="specialCases">Special Cases</label>
+                                <label>Special Cases</label>
                                 <select class="form-control" id="specialCases" name="specialCases">
                                     <option value="">Select Special Case</option>
                                     <option value="Hepa B">Hepa B</option>

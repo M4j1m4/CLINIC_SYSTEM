@@ -113,27 +113,9 @@
             <img src="images/UDMCLINIC_LOGO.png" alt="Logo" class="logo">
             <h1>UDM Clinic</h1>
         </div>
-        <div class="notification-icon" onclick="toggleNotifications()">
-            <i class="fas fa-bell"></i>
-            <span class="badge"></span>
-        </div>
-        <div id="notification-dropdown" class="notification-dropdown">
-            <div class="card">
-                <div class="card-header">
-                    Notifications
-                </div>
-                <div class="card-body">
-                    <ul class="list-group" id="notification-list">
-                        <li class="list-group-item">Appointment at 10:00 AM</li>
-                        <li class="list-group-item">New patient record added</li>
-                        <li class="list-group-item">System update scheduled</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    </div>
+
+    </div>  
     <!-- JavaScript -->
     <script>
         function toggleNotifications() {
@@ -234,8 +216,9 @@
             <!-- Consultation Form -->
             <div class="col-md-6">
                 <div id="consultation-form" class="card d-none">
-                    <div class="card-header bg-success text-white">
-                        Consultation Form
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <span>Consultation Form</span>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="closeConsultationForm()">X</button>
                     </div>
                     <div class="card-body">
                         <form action="save_consultation.php" method="POST">
@@ -269,7 +252,7 @@
                                 <textarea id="plan" name="plan" class="form-control" required></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="plan_date">Plan Date</label>
+                                <label for="plan_date">Follow Up Date</label>
                                 <input type="date" id="plan_date" name="plan_date" class="form-control" required>
                             </div>
                             <div class="form-group">
@@ -288,61 +271,11 @@
         </div>
     </div>
 
-    <!-- Record Table -->
     <div class="row justify-content-center mt-4">
-        <div class="col-md-8">
-            <div class="card">
-    <div class="card-body" style="overflow-y: auto; max-height: 400px;">
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Patient ID</th>
-                    <th>Full Name</th>
-                    <th>Date</th>
-                    <th>Time In</th>
-                    <th>Time Out</th>
-                    <th>Subjective</th>
-                    <th>Objective</th>
-                    <th>Assessment</th>
-                    <th>Plan</th>
-                    <th>Plan Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Updated query to include patient full name
-                $recordsQuery = "
-                SELECT c.*, 
-                       CONCAT(p.FirstName, ' ', IFNULL(p.MiddleInitial, ''), ' ', p.LastName) AS FullName 
-                FROM consultations c
-                JOIN patients p ON c.PatientID = p.PatientID
-                ORDER BY c.Date DESC
-            ";
-                $recordsResult = $connection->query($recordsQuery);
-
-                if ($recordsResult->num_rows > 0) {
-                    while ($record = $recordsResult->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($record['PatientID']) . "</td>";
-                        echo "<td>" . htmlspecialchars($record['FullName']) . "</td>";
-                        echo "<td>" . htmlspecialchars($record['Date']) . "</td>";
-                        echo "<td>" . htmlspecialchars($record['TimeIn']) . "</td>";
-                        echo "<td>" . htmlspecialchars($record['TimeOut']) . "</td>";
-                        echo "<td>" . htmlspecialchars($record['Subjective']) . "</td>";
-                        echo "<td>" . htmlspecialchars($record['Objective']) . "</td>";
-                        echo "<td>" . htmlspecialchars($record['Assessment']) . "</td>";
-                        echo "<td>" . htmlspecialchars($record['Plan']) . "</td>";
-                        echo "<td>" . htmlspecialchars($record['PlanDate']) . "</td>";
-                        echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='10' class='text-center'>No records found</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+    <div class="col-md-8 text-center">
+        <a href="staffRecordTable.php" class="btn btn-primary">View Patient Records</a>
     </div>
-
+    </div>
     <!-- JavaScript -->
     <script>
         function selectPatient(patientID, patientName) {
@@ -350,7 +283,12 @@
             document.getElementById('selected_patient').value = patientName;
             document.getElementById('consultation-form').classList.remove('d-none');
         }
+
+        function closeConsultationForm() {
+        document.getElementById('consultation-form').classList.add('d-none');
+    }
     </script>
+    
 
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

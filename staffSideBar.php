@@ -51,7 +51,6 @@
         <a href="staffIndex.php">Add Patient</a>
         <a href="staffViewpatient.php">View Patients</a>
         <a href="staffFrontconsult.php">Consultation</a>
-        <a href="settings.php">Settings</a>
         <a href="login.php">Logout</a>
     </div>
 

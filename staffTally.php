@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "clinic";
+$database = "clinic_data"; // Updated database name
 
 $connection = new mysqli($servername, $username, $password, $database);
 
@@ -11,9 +11,20 @@ if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 }
 
-// Fetch the special cases tally
-$query = "SELECT * FROM special_cases_tally";
+// Fetch the special cases tally from the "patients" table
+$query = "SELECT specialCases, COUNT(*) as tally FROM patients GROUP BY specialCases";
 $result = $connection->query($query);
+
+// Define color mapping for special cases
+$colorMapping = [
+    "Hepa B" => "#FF6347", // Tomato red
+    "PWD" => "#FFD700", // Gold
+    "Pregnant" => "#32CD32", // Lime green
+    "APL > N" => "#1E90FF", // Dodger blue
+    "PTB - Non Compliant" => "#FF4500", // Orange red
+    "PTB - Complied" => "#00CED1", // Dark turquoise
+    "For APL" => "#8A2BE2" // Blue violet
+];
 ?>
 
 <!DOCTYPE html>
@@ -92,6 +103,15 @@ $result = $connection->query($query);
         .error, .text-danger {
             color: red;
         }
+
+        /* Special Cases Colors */
+        .special-case {
+            font-weight: bold;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -124,9 +144,11 @@ $result = $connection->query($query);
                                 if ($result->num_rows > 0) {
                                     // Output data of each row
                                     while ($row = $result->fetch_assoc()) {
+                                        $specialCase = $row['specialCases'];
+                                        $color = $colorMapping[$specialCase] ?? "#808080"; // Default to gray if not mapped
                                         echo "<tr>
-                                            <td>" . $row['case_name'] . "</td>
-                                            <td>" . $row['tally'] . "</td>
+                                            <td><span class='special-case' style='background-color: $color;'>" . htmlspecialchars($specialCase) . "</span></td>
+                                            <td>" . htmlspecialchars($row['tally']) . "</td>
                                         </tr>";
                                     }
                                 } else {
@@ -136,7 +158,7 @@ $result = $connection->query($query);
                             </tbody>
                         </table>
                     </div>
-                    <a href="index.php" class="btn btn-info btn-block">Add New Patient</a>
+                    <a href="staffindex.php" class="btn btn-info btn-block">Add New Patient</a>
                 </div>
             </div>
         </div>

@@ -136,7 +136,7 @@
     <div class="container mt-4">
         <div class="row justify-content-center">
             <!-- Search Patient Table -->
-            <div class="col-md-6">
+            <div class="col-md-10">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
                         Search Patient

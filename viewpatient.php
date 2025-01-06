@@ -1,3 +1,35 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "clinic_data";
+
+// Create database connection
+$connection = new mysqli($servername, $username, $password, $database);
+
+if ($connection->connect_error) {
+    die("Connection Failed: " . $connection->connect_error);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    $delete_id = $connection->real_escape_string($_POST['delete_id']);
+
+    // Delete dependent records
+    $deleteConsultations = "DELETE FROM consultations WHERE PatientID = '$delete_id'";
+    if (!$connection->query($deleteConsultations)) {
+        echo "<script>alert('Error deleting consultations: " . $connection->error . "');</script>";
+    }
+
+    // Delete the patient
+    $deleteQuery = "DELETE FROM patients WHERE PatientID = '$delete_id'";
+    if ($connection->query($deleteQuery) === TRUE) {
+        echo "<script>alert('Record deleted successfully'); window.location.href = 'viewpatient.php';</script>";
+    } else {
+        echo "<script>alert('Error deleting record: " . $connection->error . "');</script>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -101,21 +133,10 @@
                                 <input type="text" id="search" name="search" class="form-control" placeholder="Enter Name or ID" list="suggestions">
                                 <datalist id="suggestions">
                                     <?php
-                                    $servername = "localhost";
-                                    $username = "root";
-                                    $password = "";
-                                    $database = "clinic_data";
-
-                                    $connection = new mysqli($servername, $username, $password, $database);
-
-                                    if ($connection->connect_error) {
-                                        die("Connection Failed: " . $connection->connect_error);
-                                    }
-
-                                    $suggestionQuery = "SELECT Student_Num, FirstName, LastName FROM patients";
+                                    $suggestionQuery = "SELECT PatientID, FirstName, LastName FROM patients";
                                     $suggestionResult = $connection->query($suggestionQuery);
                                     while ($row = $suggestionResult->fetch_assoc()) {
-                                        echo "<option value='" . $row['StudentNo'] . " - " . $row['FirstName'] . " " . $row['LastName'] . "'>";
+                                        echo "<option value='" . $row['PatientID'] . " - " . $row['FirstName'] . " " . $row['LastName'] . "'>";
                                     }
                                     ?>
                                 </datalist>
@@ -128,6 +149,7 @@
                             <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
+                                    <th>Patient ID</th>
                                     <th>Student Number</th>
                                     <th>First Name</th>
                                     <th>Middle Name</th>
@@ -146,6 +168,7 @@
 
                                     foreach ($searchParts as $part) {
                                         $part = $connection->real_escape_string($part);
+                                        $conditions[] = "PatientID LIKE '%$part%'";
                                         $conditions[] = "Student_Num LIKE '%$part%'";
                                         $conditions[] = "FirstName LIKE '%$part%'";
                                         $conditions[] = "LastName LIKE '%$part%'";
@@ -156,28 +179,29 @@
                                     $searchQuery = " WHERE " . implode(" OR ", $conditions);
                                 }
 
-                                $query = "SELECT Student_Num, FirstName, MiddleInitial, LastName, Sex FROM patients" . $searchQuery;
+                                $query = "SELECT PatientID, Student_Num, FirstName, MiddleInitial, LastName, Sex FROM patients" . $searchQuery;
                                 $result = $connection->query($query);
 
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
                                         echo "<tr>";
+                                        echo "<td>" . htmlspecialchars($row['PatientID']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['Student_Num']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['FirstName']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['MiddleInitial']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['LastName']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['Sex']) . "</td>";
                                         echo "<td>
-                                            <a href='edit_patient.php?id=" . $row['Student_Num'] . "' class='btn btn-warning btn-sm'>Edit</a>
-                                            <form method='POST' action='' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to delete this record?\");'>
-                                                <input type='hidden' name='delete_id' value='" . $row['Student_Num'] . "'>
+                                            <a href='edit_patient.php?id=" . $row['PatientID'] . "' class='btn btn-warning btn-sm'>Edit</a>
+                                            <form method='POST' action='' style='display:inline;' onsubmit='return confirm('Are you sure you want to delete this record?');'>
+                                                <input type='hidden' name='delete_id' value='" . $row['PatientID'] . "'>
                                                 <button type='submit' class='btn btn-danger btn-sm'>Remove</button>
                                             </form>
                                         </td>";
                                         echo "</tr>";
                                     }
                                 } else {
-                                    echo "<tr><td colspan='6' class='text-center'>No data found</td></tr>";
+                                    echo "<tr><td colspan='7' class='text-center'>No data found</td></tr>";
                                 }
                                 ?>
                             </tbody>
