@@ -61,7 +61,7 @@
     </style>
 </head>
 <body>
-    <?php include 'sidebar.php'; ?>
+    <?php include 'staffSideBar.php'; ?>
     <div class="header">
         <img src="images/UDMCLINIC_LOGO.png" alt="Logo" class="logo">
         <h1>UDM Clinic</h1>
