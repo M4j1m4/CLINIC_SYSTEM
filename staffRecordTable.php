@@ -42,7 +42,7 @@
 </head>
 
 <body>
-    <?php include 'staffSideBar.php'; ?>
+    <?php include 'sidebar.php'; ?>
     <div class="header">
         <img src="images/UDMCLINIC_LOGO.png" alt="Logo" class="logo">
         <h1>UDM Clinic</h1>
@@ -59,16 +59,25 @@
         die("Connection Failed: " . $connection->connect_error);
     }
 
-    $startDate = $endDate = "";
+    $startDate = $endDate = $programSearch = "";
     $whereClause = "";
 
-    // Handle search
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
+    // Handle date range search
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_date'])) {
         $startDate = $_POST['start_date'];
         $endDate = $_POST['end_date'];
 
         if (!empty($startDate) && !empty($endDate)) {
             $whereClause = "WHERE c.Date BETWEEN ? AND ?";
+        }
+    }
+
+    // Handle program search
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_program'])) {
+        $programSearch = $_POST['program'];
+
+        if (!empty($programSearch)) {
+            $whereClause = "WHERE p.Program LIKE ?";
         }
     }
 
@@ -91,10 +100,10 @@
     <div class="container">
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
-                Search Records by Date Range
+                Search Records
             </div>
             <div class="card-body">
-                <form method="POST" class="form-inline">
+                <form method="POST" class="form-inline mb-3">
                     <div class="form-group mr-2">
                         <label for="start_date" class="mr-2">Start Date:</label>
                         <input type="date" name="start_date" id="start_date" class="form-control" value="<?= htmlspecialchars($startDate) ?>">
@@ -103,7 +112,15 @@
                         <label for="end_date" class="mr-2">End Date:</label>
                         <input type="date" name="end_date" id="end_date" class="form-control" value="<?= htmlspecialchars($endDate) ?>">
                     </div>
-                    <button type="submit" name="search" class="btn btn-success">Search</button>
+                    <button type="submit" name="search_date" class="btn btn-success">Search by Date</button>
+                </form>
+
+                <form method="POST" class="form-inline">
+                    <div class="form-group mr-2">
+                        <label for="program" class="mr-2">Program:</label>
+                        <input type="text" name="program" id="program" class="form-control" value="<?= htmlspecialchars($programSearch) ?>" placeholder="Enter Program">
+                    </div>
+                    <button type="submit" name="search_program" class="btn btn-info">Search by Program</button>
                 </form>
             </div>
         </div>
@@ -118,6 +135,7 @@
                         <tr>
                             <th>Student_Num</th>
                             <th>Full Name</th>
+                            <th>Program</th>
                             <th>Date</th>
                             <th>Time In</th>
                             <th>Time Out</th>
@@ -134,7 +152,7 @@
                         $recordsQuery = "
                             SELECT c.*, 
                                 CONCAT(p.FirstName, ' ', IFNULL(p.MiddleInitial, ''), ' ', p.LastName) AS FullName,
-                                p.Student_Num
+                                p.Student_Num, p.Program
                             FROM consultations c
                             JOIN patients p ON c.PatientID = p.PatientID
                             $whereClause
@@ -143,7 +161,14 @@
 
                         if (!empty($whereClause)) {
                             $stmt = $connection->prepare($recordsQuery);
-                            $stmt->bind_param("ss", $startDate, $endDate);
+
+                            if (isset($_POST['search_date'])) {
+                                $stmt->bind_param("ss", $startDate, $endDate);
+                            } elseif (isset($_POST['search_program'])) {
+                                $programSearch = "%" . $programSearch . "%";
+                                $stmt->bind_param("s", $programSearch);
+                            }
+
                             $stmt->execute();
                             $recordsResult = $stmt->get_result();
                         } else {
@@ -155,6 +180,7 @@
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($record['Student_Num']) . "</td>";
                                 echo "<td>" . htmlspecialchars($record['FullName']) . "</td>";
+                                echo "<td>" . htmlspecialchars($record['Program']) . "</td>";
                                 echo "<td>" . htmlspecialchars($record['Date']) . "</td>";
                                 echo "<td>" . htmlspecialchars($record['TimeIn']) . "</td>";
                                 echo "<td>" . htmlspecialchars($record['TimeOut']) . "</td>";
@@ -172,7 +198,7 @@
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='11' class='text-center'>No records found</td></tr>";
+                            echo "<tr><td colspan='12' class='text-center'>No records found</td></tr>";
                         }
                         ?>
                     </tbody>

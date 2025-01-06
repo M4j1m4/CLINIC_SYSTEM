@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #f7f9fc; /* Light grey-blue background */
+            background-color: #f7f9fc;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -26,7 +26,7 @@
         .forgot-password-form {
             padding: 20px;
         }
-        .forgot-password-form input {
+        .forgot-password-form select, .forgot-password-form input {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 15px;
@@ -37,7 +37,7 @@
         .forgot-password-form button {
             width: 100%;
             padding: 10px;
-            background-color: #4682B4; /* Steel blue background */
+            background-color: #4682B4;
             color: white;
             border: none;
             border-radius: 5px;
@@ -46,7 +46,7 @@
             transition: background-color 0.3s;
         }
         .forgot-password-form button:hover {
-            background-color: #4169E1; /* Royal blue */
+            background-color: #4169E1;
         }
         .forgot-password-form .back-to-login {
             display: block;
@@ -78,9 +78,29 @@
     <div class="forgot-password-container">
         <form class="forgot-password-form" method="post" action="forgotPasswordBackEnd.php">
             <h2 style="text-align: center; color: #4682B4;">Forgot Password</h2>
-            <input type="text" name="username" placeholder="Enter your username" required>
+
+            <!-- Dropdown for usernames -->
+            <select name="username" required>
+                <option value="" disabled selected>Select a username</option>
+                <?php
+                // Populate the dropdown with usernames
+                $conn = new mysqli("localhost", "root", "", "clinic_data");
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+                $result = $conn->query("SELECT name FROM account");
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
+                    }
+                } else {
+                    echo "<option disabled>No usernames found</option>";
+                }
+                $conn->close();
+                ?>
+            </select>
+
             <input type="password" name="new_password" placeholder="Enter new password" required>
-            <input type="password" name="confirm_password" placeholder="Confirm new password" required>
 
             <!-- Display error or success message -->
             <?php

@@ -17,27 +17,22 @@ if ($conn->connect_error) {
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Fix: Change $_POST['name'] to $_POST['username'] to match the form field name
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $new_password = mysqli_real_escape_string($conn, $_POST['new_password']);
-    $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
-
-    // Check if the new password and confirm password match
-    if ($new_password !== $confirm_password) {
-        $error = "Passwords do not match!";
-        header("Location: forgotPassword.php?error=" . urlencode($error));
-        exit();
-    }
+    // Get the username and new password from the form
+    $username = trim($_POST['username']);
+    $new_password = trim($_POST['new_password']);
 
     // Query to check if the username exists
-    $sql = "SELECT * FROM account WHERE name = '$username'";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare("SELECT * FROM account WHERE TRIM(name) = TRIM(?)");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows == 1) {
         // Update the password for the user (without hashing)
-        $update_sql = "UPDATE account SET Password = '$new_password' WHERE name = '$username'";
+        $update_stmt = $conn->prepare("UPDATE account SET Password = ? WHERE TRIM(name) = TRIM(?)");
+        $update_stmt->bind_param("ss", $new_password, $username);
 
-        if ($conn->query($update_sql) === TRUE) {
+        if ($update_stmt->execute()) {
             $success = "Password successfully updated!";
             header("Location: forgotPassword.php?success=" . urlencode($success));
             exit();
@@ -51,7 +46,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: forgotPassword.php?error=" . urlencode($error));
         exit();
     }
+
+    // Close statements
+    $stmt->close();
+    $update_stmt->close();
 }
 
+// Close the connection
 $conn->close();
 ?>

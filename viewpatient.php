@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
 
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><span class="glyphicon glyphicon-user"></span> Patient List</h4>
@@ -186,14 +186,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
                                     while ($row = $result->fetch_assoc()) {
                                         echo "<tr>";
                                         echo "<td>" . htmlspecialchars($row['PatientID']) . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['Student_Num']) . "</td>";
+                                        echo "<td><a href='view_details.php?id=" . htmlspecialchars($row['Student_Num']) . "'>" . htmlspecialchars($row['Student_Num']) . "</a></td>";
                                         echo "<td>" . htmlspecialchars($row['FirstName']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['MiddleInitial']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['LastName']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['Sex']) . "</td>";
                                         echo "<td>
                                             <a href='edit_patient.php?id=" . $row['PatientID'] . "' class='btn btn-warning btn-sm'>Edit</a>
-                                            <form method='POST' action='' style='display:inline;' onsubmit='return confirm('Are you sure you want to delete this record?');'>
+                                            <form method='POST' action='' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to delete this record?\");'>
                                                 <input type='hidden' name='delete_id' value='" . $row['PatientID'] . "'>
                                                 <button type='submit' class='btn btn-danger btn-sm'>Remove</button>
                                             </form>
