@@ -51,7 +51,7 @@
         <a href="staffIndex.php">Add Patient</a>
         <a href="staffViewpatient.php">View Patients</a>
         <a href="staffFrontconsult.php">Consultation</a>
-        <a href="login.php">Logout</a>
+        <a href="stafflogout.php">Logout</a>
     </div>
 
     <!-- Bootstrap JS and dependencies -->

@@ -1,4 +1,16 @@
 <?php
+
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    // Redirect to the login page with an error message
+    header("Location: login.php?error=" . urlencode("Please log in to access this page."));
+    exit();
+}
+
+
+
 // Database connection
 $servername = "localhost";
 $username = "root";

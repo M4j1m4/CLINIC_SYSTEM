@@ -30,6 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Store user information in the session
         $_SESSION['name'] = $user['name'];
+        $_SESSION['loggedin'] = true; // Set a logged-in flag
 
         // Redirect to the dashboard or another page
         header("Location: tally.php");

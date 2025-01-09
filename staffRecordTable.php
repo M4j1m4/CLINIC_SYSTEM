@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+// Check if the staff is logged in
+if (!isset($_SESSION['staff_loggedin']) || $_SESSION['staff_loggedin'] !== true) {
+    // Redirect to the login page with an error message
+    header("Location: login.php?error=" . urlencode("Please log in to access this page."));
+    exit();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 

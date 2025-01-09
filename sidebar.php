@@ -51,7 +51,7 @@
         <a href="index.php">Add Patient</a>
         <a href="viewpatient.php">View Patients</a>
         <a href="frontconsult.php">Consultation</a>
-        <a href="login.php">Logout</a>
+        <a href="logout.php">Logout</a>
     </div>
 
     <!-- Bootstrap JS and dependencies -->

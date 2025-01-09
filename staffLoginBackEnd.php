@@ -27,19 +27,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows == 1) {
         // Successful login
         $user = $result->fetch_assoc();
-
+    
         // Store user information in the session
         $_SESSION['username'] = $user['Username'];
-
+        $_SESSION['staff_loggedin'] = true; // Add this line
+    
         // Redirect to the dashboard or another page
         header("Location: staffTally.php");
         exit();
+        
     } else {
         // Redirect back to login page with error message
         $error = "Invalid Username or Password!";
-        header("Location: login.php?error=" . urlencode($error));
+        header("Location: stafflogin.php?error=" . urlencode($error));
         exit();
     }
+
 }
 
 $conn->close();

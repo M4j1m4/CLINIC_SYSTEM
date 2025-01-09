@@ -1,4 +1,16 @@
 <?php
+
+session_start();
+
+// Check if the staff is logged in
+if (!isset($_SESSION['staff_loggedin']) || $_SESSION['staff_loggedin'] !== true) {
+    // Redirect to the login page with an error message
+    header("Location: login.php?error=" . urlencode("Please log in to access this page."));
+    exit();
+}
+
+
+
 // Database connection code remains the same
 $servername = "localhost";
 $username = "root";
@@ -269,7 +281,7 @@ $assessmentResult = $connection->query($assessmentQuery);
                             if ($assessmentResult->num_rows > 0) {
                                 while ($row = $assessmentResult->fetch_assoc()) {
                                     echo "<tr>
-                                        <td><a href='assessment_details.php?assessment=" . urlencode($row['Assessment']) . "'>" . htmlspecialchars($row['Assessment']) . "</a></td>
+                                        <td><a href='staffassessment_details.php?assessment=" . urlencode($row['Assessment']) . "'>" . htmlspecialchars($row['Assessment']) . "</a></td>
                                         <td>" . htmlspecialchars($row['tally']) . "</td>
                                     </tr>";
                                 }
