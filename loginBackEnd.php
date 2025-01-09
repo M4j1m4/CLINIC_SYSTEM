@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['name'] = $user['name'];
 
         // Redirect to the dashboard or another page
-        header("Location: index.php");
+        header("Location: tally.php");
         exit();
     } else {
         // Redirect back to login page with error message

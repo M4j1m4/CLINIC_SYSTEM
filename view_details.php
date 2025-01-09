@@ -90,10 +90,20 @@
         .picture-holder input {
             display: none;
         }
+
+        @media print {
+            .header, .no-print, #sidebar {
+                display: none;
+            }
+            .details-container {
+                box-shadow: none;
+                border: none;
+            }
+        }
     </style>
 </head>
 <body>
-    <?php include 'sidebar.php'; ?>
+    <?php include 'SideBar.php'; ?>
 
     <div class="header">
         <img src="images/UDMCLINIC_LOGO.png" alt="Logo" class="logo">
@@ -165,38 +175,46 @@
 
             <!-- Picture holder -->
             <div class="picture-holder" onclick="document.getElementById('imageInput').click();">
-                <img src="<?php echo $imgPath; ?>" alt="Patient Photo">
+                <img id="patientPhoto" src="<?php echo $imgPath; ?>" alt="Patient Photo">
                 <form id="uploadForm" enctype="multipart/form-data">
-                    <input type="file" id="imageInput" name="image" accept="image/png, image/jpeg" onchange="uploadImage(<?php echo $patientID; ?>)">
+                    <input type="file" id="imageInput" name="image" accept="image/png, image/jpeg" style="display: none;" onchange="uploadImage('<?php echo $patientID; ?>')">
                 </form>
             </div>
-
+            <div class="no-print">
+                <button class="btn btn-primary" onclick="window.print()">Print</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function uploadImage(patientID) {
-            const input = document.getElementById('imageInput');
-            const formData = new FormData();
-            formData.append('image', input.files[0]);
-            formData.append('id', patientID);
-
-            fetch('upload_image.php', {
-                method: 'POST',
-                body: formData,
-            })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                    if (data.status === 'success') {
-                        location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while uploading the image.');
-                });
+    function uploadImage(patientID) {
+        const input = document.getElementById('imageInput');
+        if (input.files.length === 0) {
+            alert('Please select an image to upload.');
+            return;
         }
+
+        const formData = new FormData();
+        formData.append('image', input.files[0]);
+        formData.append('id', patientID);
+
+        fetch('upload_image.php', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === 'success') {
+                    // Update the image dynamically
+                    document.getElementById('patientPhoto').src = data.imagePath + '?t=' + new Date().getTime(); // Cache-busting
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while uploading the image.');
+            });
+    }
     </script>
 </body>
 </html>

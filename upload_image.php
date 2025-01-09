@@ -1,64 +1,48 @@
 <?php
-// Database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
 $database = "clinic_data";
 
+// Database connection
 $connection = new mysqli($servername, $username, $password, $database);
-
-// Check connection
 if ($connection->connect_error) {
-    die("Connection failed: " . $connection->connect_error);
+    die(json_encode(['status' => 'error', 'message' => 'Database connection failed: ' . $connection->connect_error]));
 }
 
-// Check if the form has been submitted and the file is uploaded
-if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-    $patientID = $_POST['id']; // Get patient ID from POST
-    $fileTmpName = $_FILES['image']['tmp_name'];
-    $fileName = $_FILES['image']['name'];
-    $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_POST['id'])) {
+    $patientID = $connection->real_escape_string($_POST['id']);
+    $image = $_FILES['image'];
+
+    // Validate the image
     $allowedExtensions = ['jpg', 'jpeg', 'png'];
+    $fileExtension = strtolower(pathinfo($image['name'], PATHINFO_EXTENSION));
+    if (!in_array($fileExtension, $allowedExtensions)) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid file type. Only JPG, JPEG, and PNG are allowed.']);
+        exit;
+    }
 
-    // Check if the file has an allowed extension
-    if (in_array(strtolower($fileExtension), $allowedExtensions)) {
-        $uploadDir = 'uploads/';
-        $newFileName = $patientID . '.' . $fileExtension; // Create a unique name based on PatientID
-        $uploadPath = $uploadDir . $newFileName;
+    // Generate a unique file name and save the file
+    $uploadDir = 'uploads/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+    $fileName = uniqid('patient_', true) . '.' . $fileExtension;
+    $filePath = $uploadDir . $fileName;
 
-        // Move the uploaded file to the server's upload directory
-        if (move_uploaded_file($fileTmpName, $uploadPath)) {
-            // Update the patient's image path in the database
-            $query = "UPDATE patients SET patient_pic = '$uploadPath' WHERE Student_Num = '$patientID'";
-            if ($connection->query($query) === TRUE) {
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => 'Image uploaded and database updated successfully!'
-                ]);
-            } else {
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'Failed to update the database.'
-                ]);
-            }
+    if (move_uploaded_file($image['tmp_name'], $filePath)) {
+        // Update the database
+        $updateQuery = "UPDATE patients SET patient_pic = '$filePath' WHERE Student_Num = '$patientID'";
+        if ($connection->query($updateQuery) === TRUE) {
+            echo json_encode(['status' => 'success', 'message' => 'Image uploaded successfully.', 'imagePath' => $filePath]);
         } else {
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Failed to upload the image.'
-            ]);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to update the database: ' . $connection->error]);
         }
     } else {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Invalid file type. Only JPG, JPEG, and PNG files are allowed.'
-        ]);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to upload the file.']);
     }
 } else {
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'No file uploaded or file error.'
-    ]);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request.']);
 }
 
 $connection->close();
-?>

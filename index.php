@@ -6,8 +6,6 @@
     <title>Add New Patient</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <!-- FontAwesome for the Notification Bell -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background-color: #f0f8ff; /* Light blue background */
@@ -41,57 +39,6 @@
             font-size: 24px;
         }
 
-        /* Notification Bell Icon */
-        .notification-bell {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .notification-bell .badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: red;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 50%;
-            font-size: 12px;
-        }
-
-        /* Dropdown Menu Styles */
-        .notification-dropdown {
-            position: absolute;
-            top: 50px;
-            right: 20px;
-            display: none;
-            width: 300px;
-            max-height: 300px;
-            overflow-y: auto;
-            background-color: white;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            z-index: 1001;
-        }
-
-        .notification-dropdown .dropdown-header {
-            background-color: #f1f1f1;
-            padding: 10px;
-            font-weight: bold;
-        }
-
-        .notification-dropdown .notification-item {
-            padding: 10px;
-            border-bottom: 1px solid #f1f1f1;
-            cursor: pointer;
-        }
-
-        .notification-dropdown .notification-item:hover {
-            background-color: #f9f9f9;
-        }
 
         /* Popup Table Styles */
         .popup-table {
@@ -209,39 +156,8 @@
     <div class="header">
         <img src="images/UDMCLINIC_LOGO.png" alt="Logo" class="logo">
         <h1>UDM Clinic</h1>
-        
-        <!-- Notification Bell Icon -->
-        <div class="notification-bell" onclick="toggleNotificationDropdown()">
-            <i class="fas fa-bell"></i>
-            <span class="badge" id="notificationCount">3</span> <!-- Example Notification Count -->
-        </div>
     </div>
 
-    <!-- Notification Dropdown -->
-    <div class="notification-dropdown" id="notificationDropdown">
-        <div class="dropdown-header">Notifications</div>
-        <div class="notification-item" onclick="showPopup()">New patient added: John Doe</div>
-        <div class="notification-item" onclick="showPopup()">Appointment reminder: 2 PM tomorrow</div>
-        <div class="notification-item" onclick="showPopup()">Emergency contact updated for Jane Smith</div>
-    </div>
-
-<!-- Popup Table -->
-<div class="popup-table" id="popupTable">
-    <span class="close-btn" onclick="closePopup()">&times;</span>
-    <h4>Notification Details</h4>
-    <table>
-        <tr>
-            <th>Notification</th>
-            <td>Details about the selected notification will appear here.</td>
-        </tr>
-    </table>
-    <div class="sms-btn-container">
-        <!-- SMS Button -->
-        <button type="button" class="sms-btn" onclick="SMS()">
-            SMS
-        </button>
-    </div>
-</div>
 
     <!-- Main Content -->
     <div class="container mt-5">
@@ -345,21 +261,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-    <!-- Notification Dropdown JS -->
-    <script>
-        function toggleNotificationDropdown() {
-            var dropdown = document.getElementById("notificationDropdown");
-            dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
-        }
-
-        function showPopup() {
-            document.getElementById("popupTable").style.display = "block";
-        }
-
-        function closePopup() {
-            document.getElementById("popupTable").style.display = "none";
-        }
-        
-    </script>
 </body>
 </html>

@@ -31,9 +31,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES ('$patientID', '$date', '$timeIn', '$timeOut', '$subjective', '$objective', '$assessment', '$plan', '$planDate', '$savedBy')";
 
     if ($connection->query($sql) === TRUE) {
-        echo "Consultation record saved successfully.";
+        // Display success message with JavaScript
+        echo "<script>
+                alert('Consultation record saved successfully.');
+                window.location.href = 'frontconsult.php'; // Redirect to a desired page
+              </script>";
     } else {
-        echo "Error: " . $sql . "<br>" . $connection->error;
+        // Display error message with JavaScript
+        echo "<script>
+                alert('Error: " . addslashes($connection->error) . "');
+              </script>";
     }
 
     $connection->close();

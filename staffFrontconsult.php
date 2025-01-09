@@ -296,7 +296,7 @@
 
     <div class="row justify-content-center mt-4">
     <div class="col-md-8 text-center">
-        <a href="recordTable.php" class="btn btn-primary">View Patient Records</a>
+        <a href="staffRecordTable.php" class="btn btn-primary">View Patient Records</a>
     </div>
     </div>
     <!-- JavaScript -->

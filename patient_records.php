@@ -55,11 +55,33 @@
         .table-responsive {
             -webkit-overflow-scrolling: touch;
         }
+
+        /* Hide unnecessary elements in print */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .printable-area, .printable-area * {
+                visibility: visible;
+            }
+
+            .printable-area {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+
+            .btn {
+                display: none;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <?php include 'sidebar.php'; ?>
+    <?php include 'SideBar.php'; ?>
     <div class="header">
         <img src="images/UDMCLINIC_LOGO.png" alt="Logo" class="logo">
         <h1>UDM Clinic</h1>
@@ -114,7 +136,11 @@
     }
     ?>
 
-    <div class="container">
+    <div class="container printable-area">
+        <div class="d-flex justify-content-between mb-4">
+            <h2>Patient Records</h2>
+            <button class="btn btn-secondary" onclick="window.print()">Print</button>
+        </div>
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
                 Patient Records for: <?= htmlspecialchars($patient['FirstName'] . ' ' . $patient['LastName']) ?>

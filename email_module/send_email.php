@@ -13,36 +13,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = $data['message'];
 
     $mail = new PHPMailer(true);
+    $response = array();
 
     try {
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'GMAIL NG SENDER;'; 
-        $mail->Password = 'APP PASSWORD NG SENDER'; 
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        // Server settings
+        $mail->SMTPDebug = 0;                      // Disable debug output
+        $mail->isSMTP();                           
+        $mail->Host       = 'smtp.gmail.com';      
+        $mail->SMTPAuth   = true;                  
+        $mail->Username   = 'clinicudm@gmail.com'; 
+        $mail->Password   = 'xveyzqmpbpjliwun';    
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = 465;                   
 
-        $mail->setFrom('EMAIL NG SENDER', 'NAME NG SENDER');
+        // Recipients
+        $mail->setFrom('clinicudm@gmail.com', 'UDM Clinic');
         $mail->addAddress($recipient);
 
+        // Content
         $mail->isHTML(true);
         $mail->Subject = $subject;
-        $mail->Body = $message;
+        $mail->Body    = $message;
+        $mail->AltBody = strip_tags($message);
 
         $mail->send();
         $status = 'success';
-        echo json_encode(['status' => 'Email sent successfully']);
+        $response = array(
+            'status' => 'success',
+            'message' => 'Email sent successfully'
+        );
+        
     } catch (Exception $e) {
         $status = 'failed';
-        echo json_encode(['status' => 'Email could not be sent. Error: ' . $mail->ErrorInfo]);
+        $response = array(
+            'status' => 'error',
+            'message' => 'Email could not be sent. Error: ' . $mail->ErrorInfo
+        );
     }
 
-   
-    $stmt = $conn->prepare("INSERT INTO email_logs (recipient_email, subject, message, status) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param('ssss', $recipient, $subject, $message, $status);
-    $stmt->execute();
-    $stmt->close();
+    // Log the email attempt
+    try {
+        $stmt = $conn->prepare("INSERT INTO email_logs (recipient_email, subject, message, status) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param('ssss', $recipient, $subject, $message, $status);
+        $stmt->execute();
+        $stmt->close();
+    } catch (Exception $e) {
+        // Log database errors but don't show to user
+        error_log("Database error: " . $e->getMessage());
+    }
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
 }
 
 $conn->close();
