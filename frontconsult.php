@@ -245,7 +245,30 @@
                             </div>
                             <div class="form-group">
                                 <label for="assessment">Assessment</label>
-                                <textarea id="assessment" name="assessment" class="form-control" required></textarea>
+                                <select id="assessment" name="assessment" class="form-control" required>
+                                    <option value="" disabled selected>Select an option</option>
+                                    <option value="ophthalmology">Ophthalmology</option>
+                                    <option value="cardiovascular">Cardiovascular</option>
+                                    <option value="digestive">Digestive/GIT</option>
+                                    <option value="endocrine">Endocrine</option>
+                                    <option value="integumentary">Integumentary</option>
+                                    <option value="lymphatic">Lymphatic</option>
+                                    <option value="muscular">Muscular</option>
+                                    <option value="nervous">Nervous</option>
+                                    <option value="respiratory">Respiratory</option>
+                                    <option value="reproductive">Reproductive</option>
+                                    <option value="skeletal">Skeletal</option>
+                                    <option value="urinary">Urinary/GUT</option>
+                                    <option value="dental">Dental</option>
+                                    <option value="emergency">Emergency</option>
+                                    <option value="cases">Cases</option>
+                                    <option value="animal_bite">Animal Bite</option>
+                                    <option value="teleconsult">Teleconsult</option>
+                                    <option value="teledentistry">Teledentistry</option>
+                                    <option value="medical_certificate">Medical Certificate</option>
+                                    <option value="hospital_referral">Hospital Referral</option>
+                                    <option value="ent">ENT</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="plan">Plan</label>

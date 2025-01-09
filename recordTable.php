@@ -59,7 +59,7 @@
         die("Connection Failed: " . $connection->connect_error);
     }
 
-    $startDate = $endDate = $programSearch = "";
+    $startDate = $endDate = $programSearch = $nameSearch = "";
     $whereClause = "";
 
     // Handle date range search
@@ -78,6 +78,15 @@
 
         if (!empty($programSearch)) {
             $whereClause = "WHERE p.Program LIKE ?";
+        }
+    }
+
+    // Handle name search
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_name'])) {
+        $nameSearch = $_POST['name'];
+
+        if (!empty($nameSearch)) {
+            $whereClause = "WHERE CONCAT(p.FirstName, ' ', IFNULL(p.MiddleInitial, ''), ' ', p.LastName) LIKE ?";
         }
     }
 
@@ -122,6 +131,15 @@
                     </div>
                     <button type="submit" name="search_program" class="btn btn-info">Search by Program</button>
                 </form>
+
+                <!-- Search by Name -->
+                <form method="POST" class="form-inline mt-3">
+                    <div class="form-group mr-2">
+                        <label for="name" class="mr-2">Patient Name:</label>
+                        <input type="text" name="name" id="name" class="form-control" value="<?= htmlspecialchars($nameSearch) ?>" placeholder="Enter Full Name">
+                    </div>
+                    <button type="submit" name="search_name" class="btn btn-warning">Search by Name</button>
+                </form>
             </div>
         </div>
 
@@ -149,6 +167,7 @@
                     </thead>
                     <tbody>
                         <?php
+                        // Updated query to show only the most recent consultation for each patient
                         $recordsQuery = "
                             SELECT c.*, 
                                 CONCAT(p.FirstName, ' ', IFNULL(p.MiddleInitial, ''), ' ', p.LastName) AS FullName,
@@ -156,7 +175,13 @@
                             FROM consultations c
                             JOIN patients p ON c.PatientID = p.PatientID
                             $whereClause
-                            ORDER BY c.Date ASC
+                            AND c.Date = (
+                                SELECT MAX(c2.Date)
+                                FROM consultations c2
+                                WHERE c2.PatientID = c.PatientID
+                            )
+                            GROUP BY c.PatientID
+                            ORDER BY c.Date DESC
                         ";
 
                         if (!empty($whereClause)) {
@@ -167,6 +192,9 @@
                             } elseif (isset($_POST['search_program'])) {
                                 $programSearch = "%" . $programSearch . "%";
                                 $stmt->bind_param("s", $programSearch);
+                            } elseif (isset($_POST['search_name'])) {
+                                $nameSearch = "%" . $nameSearch . "%";
+                                $stmt->bind_param("s", $nameSearch);
                             }
 
                             $stmt->execute();
@@ -179,7 +207,7 @@
                             while ($record = $recordsResult->fetch_assoc()) {
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($record['Student_Num']) . "</td>";
-                                echo "<td>" . htmlspecialchars($record['FullName']) . "</td>";
+                                echo "<td><a href='patient_records.php?id=" . htmlspecialchars($record['PatientID']) . "'>" . htmlspecialchars($record['FullName']) . "</a></td>";
                                 echo "<td>" . htmlspecialchars($record['Program']) . "</td>";
                                 echo "<td>" . htmlspecialchars($record['Date']) . "</td>";
                                 echo "<td>" . htmlspecialchars($record['TimeIn']) . "</td>";

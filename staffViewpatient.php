@@ -161,7 +161,7 @@
                                     if ($result->num_rows > 0) {
                                         while ($row = $result->fetch_assoc()) {
                                             echo "<tr>";
-                                            echo "<td><a href='view_details.php?id=" . $row['Student_Num'] . "'>" . htmlspecialchars($row['Student_Num']) . "</a></td>";
+                                            echo "<td><a href='staffViewpatient.php?id=" . $row['Student_Num'] . "'>" . htmlspecialchars($row['Student_Num']) . "</a></td>";
                                             echo "<td>" . htmlspecialchars($row['FirstName']) . "</td>";
                                             echo "<td>" . htmlspecialchars($row['MiddleInitial']) . "</td>";
                                             echo "<td>" . htmlspecialchars($row['LastName']) . "</td>";
