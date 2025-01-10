@@ -174,7 +174,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                             <th>Assessment</th>
                             <th>Plan</th>
                             <th>Follow Up Date</th>
+                            <th>Saved By</th>
                             <th>Actions</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -229,6 +231,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                 echo "<td>" . htmlspecialchars($record['Assessment']) . "</td>";
                                 echo "<td>" . htmlspecialchars($record['Plan']) . "</td>";
                                 echo "<td>" . htmlspecialchars($record['PlanDate']) . "</td>";
+                                echo "<td>" . htmlspecialchars($record['SavedBy']) . "</td>";
                                 echo "<td>
                                     <form method='POST' onsubmit='return confirm(\"Are you sure you want to delete this record?\");'>
                                         <input type='hidden' name='delete_id' value='" . htmlspecialchars($record['ConsultationID']) . "'>

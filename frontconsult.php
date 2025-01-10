@@ -295,8 +295,18 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                                 <input type="time" id="time_out" name="time_out" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label for="saved_by">Saved By</label>
-                                <input type="text" id="saved_by" name="saved_by" class="form-control" required>
+                            <label for="saved_by">Saved By</label>
+                                <select class="form-control" id="saved_by" name="saved_by" required>
+                                    <option value="">Select Name</option>
+                                    <option>DR. M. Isidro</option>
+                                    <option>R. Garcia</option>
+                                    <option>E. Acosta</option>
+                                    <option>M. R. Suarez</option>
+                                    <option>S. Hilario</option>
+                                    <option>E. Ege</option>
+                                    <option>J. Magpayo</option>
+                                    <option>A. Miña</option>
+                                </select>
                             </div>
                             <button type="submit" class="btn btn-success">Save Consultation</button>
                         </form>

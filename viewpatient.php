@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
 
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-9">
+            <div class="col-md-10">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><span class="glyphicon glyphicon-user"></span> Patient List</h4>
